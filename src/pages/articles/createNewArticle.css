@@ -1,0 +1,13 @@
+.tag-pill {
+    background-color: #4a5258;
+}
+
+.tag-list2 {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+.ion-close-round :hover {
+    cursor: pointer;
+}

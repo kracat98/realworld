@@ -1,0 +1,8 @@
+.d_hidden {
+  visibility: hidden;
+}
+
+.tag-pill:hover {
+  background-color: #5a6269;
+  cursor: pointer;
+}
