@@ -1,1 +1,5 @@
-import { useHistory } from "react-router-dom";
+import moment from "moment";
+
+export const formatDate = (date) => {
+  return moment(date).format("MMMM d YYYY");
+};

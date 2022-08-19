@@ -5,10 +5,7 @@ import { baseClass } from "../func/BaseClass";
 import { user } from "../func/User";
 
 export default function HeaderLoggedIn() {
-  const history = useHistory();
-  const token = localStorage.getItem("token");
-  const API = "https://api.realworld.io/api";
-
+  const userName = localStorage.getItem("userName");
   // useEffect(() => {
   //   const getUserInfo = async () => {
   //     const a = await user.getUser();
@@ -40,9 +37,9 @@ export default function HeaderLoggedIn() {
             </Link>
           </li>
           <li className="nav-item">
-            <Link to="/userName" className="nav-link">
+            <Link to={`/${userName}`} className="nav-link">
               <image />
-              {localStorage.getItem("userName")}
+              {userName}
             </Link>
           </li>
         </ul>

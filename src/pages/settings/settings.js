@@ -5,7 +5,6 @@ export default function Settings() {
   const token = localStorage.getItem("token");
   const [user, setUser] = useState({});
   const history = useHistory();
-  console.log(user);
   useEffect(() => {
     const getUserInfo = async () => {
       const res = await axios({

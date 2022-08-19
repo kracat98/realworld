@@ -1,21 +1,19 @@
 import axios from "axios";
-const token = localStorage.getItem("token") || "";
-const API = "https://api.realworld.io/api";
 
+const API = "https://api.realworld.io/api";
 export class BaseClass {
-  // eslint-disable-next-line no-useless-constructor
   constructor() {}
-  get = async (path) => {
-    const res = await axios({
+  get = (path) => {
+    const token = localStorage.getItem("token") || "";
+    return axios({
       method: "GET",
       url: `${API}/${path}`,
       headers: { Authorization: `Token ${token}` },
     });
-    console.log("dsa", res);
-    return res;
   };
 
   post = (path, data) => {
+    const token = localStorage.getItem("token") || "";
     return axios({
       method: "post",
       url: `${API}/${path}`,
@@ -25,6 +23,7 @@ export class BaseClass {
   };
 
   put = (path, data) => {
+    const token = localStorage.getItem("token") || "";
     return axios({
       method: "put",
       url: `${API}/${path}`,
@@ -34,8 +33,9 @@ export class BaseClass {
   };
 
   delete = (path) => {
+    const token = localStorage.getItem("token") || "";
     return axios({
-      method: "post",
+      method: "delete",
       url: `${API}/${path}`,
       headers: { Authorization: `Token ${token}` },
     });

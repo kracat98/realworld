@@ -1,76 +1,42 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import Article from "../../components/Article";
 import "./home.css";
+import { articlesMethod } from "../../func/Articles";
+import { tagsMethod } from "../../func/Tags";
 
 export default function Home() {
   const token = localStorage.getItem("token") || "";
-
-  const [articles, setArticles] = useState([]);
+  const [articlesList, setArticlesList] = useState([]);
   const [tags, setTags] = useState([]);
-  const [feeds, setFeeds] = useState([]);
-  const [articlesTag, setArticlesTag] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const getArticles = async () => {
-      const res = await axios({
-        method: "get",
-        url: "https://api.realworld.io/api/articles",
-        headers: { Authorization: `Token ${token}` },
-      });
-      setArticles(res.data.articles);
-    };
-    try {
-      getArticles();
-    } catch (error) {
-      console.log("error", error);
-    }
-  }, [token]);
+  const getArticles = async () => {
+    console.log(token);
+    setIsLoading(true);
+    const res = await articlesMethod.getArticles();
+    setArticlesList(res.data.articles);
+    setIsLoading(false);
+  };
 
-  useEffect(() => {
-    const getTags = async () => {
-      const res = await axios({
-        method: "get",
-        url: "https://api.realworld.io/api/tags",
-        headers: { Authorization: `Token ${token}` },
-      });
-      setTags(res.data.tags);
-    };
-    try {
-      getTags();
-    } catch (error) {
-      console.log("error", error);
-    }
-  }, []);
+  const getTags = async () => {
+    const res = await tagsMethod.getTags();
+    setTags(res.data.tags);
+    setIsLoading(false);
+  };
+
   const getFeeds = async () => {
-    const res = await axios({
-      method: "get",
-      url: "https://api.realworld.io/api/articles/feed",
-      headers: { Authorization: `Token ${token}` },
-    });
-    setFeeds(res.data.articles);
+    setIsLoading(true);
+    const res = await articlesMethod.getFeed();
+    setArticlesList(res.data.articles);
+    setIsLoading(false);
   };
-  const getArticlesByTag = async (tag) => {
-    const res = await axios({
-      method: "get",
-      url: `https://api.realworld.io/api/articles?tag=${tag}`,
-      headers: { Authorization: `Token ${token}` },
-    });
-    setArticlesTag(res.data.articles);
-  };
-  //   useEffect(() => {
-  //     try {
-  //       getFeeds();
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   }, []);
 
-  // useEffect(() => {
-  //   const tagsList = document.querySelectorAll('.tag-pill')
-  //   console.log(tagsList)
-  // })
+  const getArticlesByTag = async (tag) => {
+    setIsLoading(true);
+    const res = await articlesMethod.getArticlesByTag(tag);
+    setArticlesList(res.data.articles);
+    setIsLoading(false);
+  };
 
   const renderArticles = (data) => {
     return data?.map((article, index) => {
@@ -97,7 +63,6 @@ export default function Home() {
 
   const showArticlesWithTag = (tagName) => {
     const content = document.getElementById("nav-contact-tab");
-    const contentArticals = document.getElementById("nav-contact");
     content.style.visibility = "visible";
     content.innerHTML = `#${tagName}`;
     const tab = document.getElementsByClassName("tab");
@@ -105,12 +70,6 @@ export default function Home() {
       tab[i].classList.remove("active");
     }
     content.classList.add("active");
-    const tabPane = document.getElementsByClassName("tab-pane");
-    for (let i = 0; i < tabPane.length; i++) {
-      tabPane[i].classList.remove("show");
-      tabPane[i].classList.remove("active");
-    }
-    contentArticals.classList.add("show", "active");
   };
 
   const hideArticlesWithTag = () => {
@@ -118,27 +77,32 @@ export default function Home() {
     content.style.visibility = "hidden";
   };
 
+  useEffect(() => {
+    try {
+      getArticles();
+      getTags();
+    } catch (error) {
+      console.log("error", error);
+    }
+  }, []);
+
   return (
     <div className="home-page">
-      <div className="banner">
-        <div className="container">
-          <h1 className="logo-font">conduit</h1>
-          <p>A place to share your knowledge.</p>
+      {!token ? (
+        <div className="banner">
+          <div className="container">
+            <h1 className="logo-font">conduit</h1>
+            <p>A place to share your knowledge.</p>
+          </div>
         </div>
-      </div>
+      ) : (
+        ""
+      )}
+
       <div className="container page">
         <div className="row">
           <div className="col-md-9">
             <div className="feed-toggle">
-              {/* <ul className="nav nav-pills outline-active">
-                        <li className="nav-item">
-                        <a className="nav-link " href>Your Feed</a>
-                        </li>
-                        <li className="nav-item">
-                        <a className="nav-link active" href>Global Feed</a>
-                        </li>
-                    </ul> */}
-
               <div>
                 <nav>
                   <div className="nav nav-tabs" id="nav-tab" role="tablist">
@@ -158,7 +122,10 @@ export default function Home() {
                       Your Feed
                     </a>
                     <a
-                      onClick={() => hideArticlesWithTag()}
+                      onClick={() => {
+                        hideArticlesWithTag();
+                        getArticles();
+                      }}
                       className="nav-item nav-link tab active"
                       id="nav-profile-tab"
                       data-toggle="tab"
@@ -185,28 +152,18 @@ export default function Home() {
                 </nav>
                 <div className="tab-content" id="nav-tabContent">
                   <div
-                    className="tab-pane "
-                    id="nav-home"
-                    role="tabpanel"
-                    aria-labelledby="nav-home-tab"
-                  >
-                    {renderArticles(feeds)}
-                  </div>
-                  <div
                     className="tab-pane show active "
                     id="nav-profile"
                     role="tabpanel"
                     aria-labelledby="nav-profile-tab"
                   >
-                    {renderArticles(articles)}
-                  </div>
-                  <div
-                    className="tab-pane "
-                    id="nav-contact"
-                    role="tabpanel"
-                    aria-labelledby="nav-contact-tab"
-                  >
-                    {renderArticles(articlesTag)}
+                    {isLoading ? (
+                      <div className="loading">Loading data ...</div>
+                    ) : articlesList.length > 0 ? (
+                      renderArticles(articlesList)
+                    ) : (
+                      <div>No articles are here... yet</div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -215,6 +172,7 @@ export default function Home() {
           <div className="col-md-3">
             <div className="sidebar">
               <p>Popular Tags</p>
+              {isLoading && <div className="loading">Loading data ...</div>}
               <div className="tag-list">{renderTags(tags)}</div>
             </div>
           </div>

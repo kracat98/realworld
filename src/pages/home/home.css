@@ -6,3 +6,19 @@
   background-color: #5a6269;
   cursor: pointer;
 }
+
+.nav-link {
+  color: #aaaaaa !important;
+}
+
+.nav-link.active {
+  color: #5cb85c !important;
+}
+
+.article-preview {
+  cursor: pointer;
+}
+
+.no-drop {
+  cursor: no-drop;
+}

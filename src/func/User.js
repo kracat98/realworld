@@ -6,7 +6,7 @@ class User extends BaseClass {
     super();
   }
   getUser = () => {
-    return this.get("/user");
+    return this.get("user");
   };
 
   postUser = (data, login = "") => {
@@ -18,4 +18,4 @@ class User extends BaseClass {
   };
 }
 
-export const user = new User();
+export const userMethod = new User();

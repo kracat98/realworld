@@ -1,5 +1,5 @@
 import React from "react";
-import { user } from "../../func/User";
+import { userMethod } from "../../func/User";
 import { useHistory } from "react-router-dom";
 export default function SignUp() {
   let history = useHistory();
@@ -15,7 +15,7 @@ export default function SignUp() {
       },
     };
     try {
-      const res = await user.postUser(userInfor);
+      const res = await userMethod.postUser(userInfor);
       if (res.status === 200) {
         history.push("/signin");
         alert("Dk thanh cong");

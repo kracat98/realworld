@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
-import { user } from "../../func/User";
+import { userMethod } from "../../func/User";
 export default function SignIn() {
   let history = useHistory();
   const handleSignIn = async (event) => {
@@ -14,12 +14,13 @@ export default function SignIn() {
       },
     };
     try {
-      const res = await user.postUser(userInfor, true);
+      const res = await userMethod.postUser(userInfor, true);
       const result = res.data.user;
       if (res.status === 200) {
         localStorage.setItem("token", result.token);
         localStorage.setItem("userName", result.username);
         localStorage.setItem("avatar", result.image);
+        localStorage.setItem("bio", result.bio);
         history.push("/");
       } else {
         alert("DN that bai");
